@@ -24,7 +24,6 @@ partial struct PlayerMovementSystem : ISystem
             
             
             float speed = playerSpeed.ValueRO.Value;
-            Debug.LogError($"hInput: {hInput}, vInput: {vInput} speed: {speed}");
 
             transform.ValueRW.Position += new float3(hInput, 0f, vInput) * deltaTime * speed;
         }
