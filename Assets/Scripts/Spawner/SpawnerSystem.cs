@@ -24,10 +24,15 @@ partial struct SpawnerSystem : ISystem
             
             var instance = ecb.Instantiate(prefab.ValueRO.Prefab);
             var random = Random.CreateFromIndex((uint) state.GlobalSystemVersion);
-            var offset = math.float3(random.NextFloat3(-5,5));
+            var offset = math.float3(random.NextFloat(-5,5), 0.5f, random.NextFloat(-5,5));
             ecb.AddComponent<LocalTransform>(instance);
             ecb.SetComponent(instance, LocalTransform.FromPosition(offset));
             ecb.AddComponent<MobComponent>(instance);
+
+            ecb.AddComponent<RandomDirectionComponent>(instance,
+                new RandomDirectionComponent()
+                    { direction = math.float3(random.NextFloat(-1, 1), 0, random.NextFloat(-1, 1)) });
+            
             prefab.ValueRW.SpawnCount--;
         }
 

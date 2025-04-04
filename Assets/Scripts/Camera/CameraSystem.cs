@@ -28,6 +28,12 @@ public partial struct CameraSystem : ISystem
 
             if (Input.GetKey(KeyCode.D))
                 moveDir += math.right();
+            
+            if (Input.GetKey(KeyCode.Q))
+                moveDir += math.up();
+            
+            if (Input.GetKey(KeyCode.E))
+                moveDir += math.down();
 
             float speed = 5.0f;
             transform.ValueRW.Position += moveDir * speed * deltaTime;
