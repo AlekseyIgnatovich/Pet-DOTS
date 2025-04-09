@@ -28,11 +28,8 @@ partial struct SpawnerSystem : ISystem
             ecb.AddComponent<LocalTransform>(instance);
             ecb.SetComponent(instance, LocalTransform.FromPosition(offset));
             ecb.AddComponent<MobComponent>(instance);
-
-            ecb.AddComponent<RandomDirectionComponent>(instance,
-                new RandomDirectionComponent()
-                    { direction = math.float3(random.NextFloat(-1, 1), 0, random.NextFloat(-1, 1)) });
-            
+            ecb.AddComponent<FormationUnit>(instance, new FormationUnit(){Index = prefab.ValueRW.SpawnCount});
+            ecb.AddComponent<TargetPosition>(instance); 
             prefab.ValueRW.SpawnCount--;
         }
 
