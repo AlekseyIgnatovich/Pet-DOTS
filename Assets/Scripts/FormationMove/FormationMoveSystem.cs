@@ -1,3 +1,4 @@
+using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
 using Unity.Entities;
@@ -23,7 +24,7 @@ public partial struct FormationMoveSystem : ISystem
         _targetPositionHandle = state.GetComponentTypeHandle<TargetPosition>();
     }
 
-    //[BurstCompile]
+    [BurstCompile]
     public void OnUpdate(ref SystemState state)
     {
         if (squadQuery.IsEmptyIgnoreFilter) return;
@@ -35,28 +36,28 @@ public partial struct FormationMoveSystem : ISystem
         _formationUnitHandle.Update(ref state);
         _targetPositionHandle.Update(ref state);
 
+        var unitsInRow = unitsQuery.CalculateEntityCount() / squadData.RowCount + 1;
+        
         var job = new ProcessUnitsJob
         {
             FormationUnitType = _formationUnitHandle,
             TargetPositionType = _targetPositionHandle,
-            DeltaTime = SystemAPI.Time.DeltaTime,
-            UnitsCount = unitsQuery.CalculateEntityCount(),
+            UnitsInRow = unitsInRow,
             SquadTransform = squadTransform,
-            SquadRowsCount = squadData.RowCount,
         };
 
         state.Dependency = job.ScheduleParallel(unitsQuery, state.Dependency);
     }
 
-    //[BurstCompile]
+    [BurstCompile]
     private partial struct ProcessUnitsJob : IJobChunk
     {
         [ReadOnly] public ComponentTypeHandle<FormationUnit> FormationUnitType;
         public ComponentTypeHandle<TargetPosition> TargetPositionType;
-        public float DeltaTime;
         public int UnitsCount;
         public LocalTransform SquadTransform;
-        public int SquadRowsCount;
+
+        public int UnitsInRow;
 
         const float spacing = 2f;
 
@@ -69,10 +70,10 @@ public partial struct FormationMoveSystem : ISystem
                 var unit = formationUnits[i];
                 TargetPosition targetPos = targetPositions[i];
 
-                int row = i / SquadRowsCount;
-                int col = i % SquadRowsCount;
+                int row = i / UnitsInRow;
+                int col = i % UnitsInRow;
 
-                float3 offset = new float3((col - SquadRowsCount / 2f) * spacing, 0, -row * spacing);
+                float3 offset = new float3((col - UnitsInRow / 2f) * spacing, 0, -row * spacing);
 
                 targetPos.Value = SquadTransform.Position + offset;
                 targetPositions[i] = targetPos;
