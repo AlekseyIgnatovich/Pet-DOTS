@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Beta_Joints_MAT1
-  m_Shader: {fileID: -6465566751694194690, guid: 79329957ebb144283bd2ae7ae76e7ff1,
+  m_Shader: {fileID: -6465566751694194690, guid: fa3577812dd20094e8f7a49f115fe6ce,
     type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -91,6 +91,7 @@ Material:
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
+    - _ComputeMeshIndex: 0
     - _Cull: 2
     - _Cutoff: 0.5
     - _DetailAlbedoMapScale: 1

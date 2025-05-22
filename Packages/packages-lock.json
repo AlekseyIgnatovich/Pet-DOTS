@@ -12,6 +12,13 @@
       },
       "hash": "954496f2a1df8802e56b1b0dc4a262fdc80c199c"
     },
+    "com.latios.latiosframework.addons": {
+      "version": "https://github.com/Dreaming381/Latios-Framework-Add-Ons.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "0c26a13bca78b2114de709f6c245c09028b99137"
+    },
     "com.unity.audio.dspgraph": {
       "version": "0.1.0-preview.22",
       "depth": 1,
