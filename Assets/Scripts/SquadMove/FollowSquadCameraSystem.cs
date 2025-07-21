@@ -12,20 +12,13 @@ public partial struct FollowSquadCameraSystem : ISystem
     {
         float3 targetPosition = float3.zero;
         float3 targetForward = math.forward();
-        bool hasTarget = false;
 
-        foreach (var (transform, input) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SquadMoveInput>>()
+        foreach (var (transform, squadData) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SquadData>>()
                      .WithAll<SquadCameraTarget>())
         {
             targetPosition = transform.ValueRO.Position;
-            float2 move = input.ValueRO.MoveInput;
-            if (!move.Equals(float2.zero))
-            {
-                targetForward = math.normalize(new float3(move.x, 0, move.y));
-                hasTarget = true;
-            }
+            targetForward = transform.ValueRO.Forward();
 
-            break;
         }
 
         //ToDo: поправить так чтобы проверка была не нужна
@@ -35,11 +28,9 @@ public partial struct FollowSquadCameraSystem : ISystem
             return;
         }
 
-        if (!hasTarget) return;
-
         foreach (var transform in SystemAPI.Query<RefRW<LocalTransform>>().WithAll<CameraFollowTag>())
         {
-            var camOffset = -targetForward * 10f + new float3(0, 5, 0);
+            var camOffset = -targetForward * 20f + new float3(0, 10, 0);
             var desiredPosition = targetPosition + camOffset;
             transform.ValueRW.Position = math.lerp(transform.ValueRW.Position, desiredPosition, SystemAPI.Time.DeltaTime * 5f);
             transform.ValueRW.Rotation = quaternion.LookRotationSafe(targetPosition - transform.ValueRW.Position, math.up());

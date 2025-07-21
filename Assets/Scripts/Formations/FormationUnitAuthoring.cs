@@ -12,6 +12,6 @@ public class FormationUnitBaker : Baker<FormationUnitAuthoring>
     {
         var entity = GetEntity(TransformUsageFlags.Dynamic);
         AddComponent(entity, new FormationUnit { Index = authoring.Index });
-        AddComponent<TargetPosition>(entity); // Начальная цель — та же позиция
+        AddComponent<UnitTargetPosition>(entity); // Начальная цель — та же позиция
     }
 }

@@ -10,6 +10,7 @@ partial struct SpawnerSystem : ISystem, ISystemStartStop
     [BurstCompile]
     public void OnStartRunning(ref SystemState state)
     {
+        Debug.LogError($"Spawn!!");
         state.RequireForUpdate<SpawnerData>();
 
         var ecb = new EntityCommandBuffer(Allocator.Temp);
@@ -17,8 +18,9 @@ partial struct SpawnerSystem : ISystem, ISystemStartStop
         ecb.AddComponent<SquadData>(squad);
         ecb.SetComponent(squad, new SquadData(){MoveSpeed = 2, RotationSpeed = 4, RowCount = 4 });
         ecb.AddComponent<SquadMoveInput>(squad);
+        // ecb.SetComponent(squad, LocalTransform.FromPositionRotation(float3.zero, quaternion.identity));
         ecb.AddComponent<LocalTransform>(squad);
-        ecb.AddComponent<LocalToWorld>(squad);
+        // ecb.AddComponent<LocalToWorld>(squad);
         ecb.AddComponent<SquadCameraTarget>(squad);
         
         ecb.AddComponent(squad, new DebugSphere()
@@ -34,9 +36,9 @@ partial struct SpawnerSystem : ISystem, ISystemStartStop
                 var instance = ecb.Instantiate(prefab.ValueRO.Prefab);
                 ecb.AddComponent<LocalTransform>(instance);
                 ecb.SetComponent(instance, LocalTransform.FromPosition(float3.zero));
-                ecb.AddComponent<MobComponent>(instance);
+                //ecb.SetComponent(instance, LocalTransform.FromPosition(float3.zero));
                 ecb.AddComponent<FormationUnit>(instance, new FormationUnit() { Index = prefab.ValueRW.SpawnCount });
-                ecb.AddComponent<TargetPosition>(instance);
+                ecb.AddComponent<UnitTargetPosition>(instance);
             }
             
             prefab.ValueRW.SpawnCount--;

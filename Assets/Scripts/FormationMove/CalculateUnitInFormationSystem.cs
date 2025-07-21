@@ -7,24 +7,24 @@ using Unity.Transforms;
 
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
-public partial struct FormationMoveSystem : ISystem
+public partial struct CalculateUnitInFormationSystem : ISystem
 {
-    EntityQuery squadQuery;
+    private EntityQuery squadQuery;
     private EntityQuery unitsQuery;
 
     private ComponentTypeHandle<FormationUnit> _formationUnitHandle;
-    private ComponentTypeHandle<TargetPosition> _targetPositionHandle;
+    private ComponentTypeHandle<UnitTargetPosition> _targetPositionHandle;
 
     public void OnCreate(ref SystemState state)
     {
         squadQuery = state.GetEntityQuery(ComponentType.ReadOnly<SquadData>(), ComponentType.ReadOnly<LocalTransform>());
-        unitsQuery = state.GetEntityQuery(ComponentType.ReadOnly<FormationUnit>(), ComponentType.ReadOnly<TargetPosition>());
+        unitsQuery = state.GetEntityQuery(ComponentType.ReadOnly<FormationUnit>(), ComponentType.ReadOnly<UnitTargetPosition>());
 
         _formationUnitHandle = state.GetComponentTypeHandle<FormationUnit>(true);
-        _targetPositionHandle = state.GetComponentTypeHandle<TargetPosition>();
+        _targetPositionHandle = state.GetComponentTypeHandle<UnitTargetPosition>();
     }
 
-    [BurstCompile]
+    [BurstCompile(CompileSynchronously = true)]//отключил журнал для джоба
     public void OnUpdate(ref SystemState state)
     {
         if (squadQuery.IsEmptyIgnoreFilter) return;
@@ -53,7 +53,7 @@ public partial struct FormationMoveSystem : ISystem
     private partial struct ProcessUnitsJob : IJobChunk
     {
         [ReadOnly] public ComponentTypeHandle<FormationUnit> FormationUnitType;
-        public ComponentTypeHandle<TargetPosition> TargetPositionType;
+        public ComponentTypeHandle<UnitTargetPosition> TargetPositionType;
         public int UnitsCount;
         public LocalTransform SquadTransform;
 
@@ -68,15 +68,17 @@ public partial struct FormationMoveSystem : ISystem
             for (int i = 0; i < chunk.Count; i++)
             {
                 var unit = formationUnits[i];
-                TargetPosition targetPos = targetPositions[i];
+                UnitTargetPosition unitTargetPos = targetPositions[i];
 
                 int row = i / UnitsInRow;
                 int col = i % UnitsInRow;
 
                 float3 offset = new float3((col - UnitsInRow / 2f) * spacing, 0, -row * spacing);
+                
+                float3 rotatedVector = math.rotate(SquadTransform.Rotation, offset);
 
-                targetPos.Value = SquadTransform.Position + offset;
-                targetPositions[i] = targetPos;
+                unitTargetPos.Value = SquadTransform.Position + rotatedVector;
+                targetPositions[i] = unitTargetPos;
             }
         }
     }

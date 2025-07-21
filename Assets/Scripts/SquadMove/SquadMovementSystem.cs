@@ -1,34 +1,36 @@
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
+using UnityEngine;
 
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct SquadMovementSystem : ISystem
 {
-    const float rotationSpeed = 1.5f;
+    const float rotationSpeed = 90f;
     const float moveSpeed = 1.5f;
     
     public void OnUpdate(ref SystemState state)
     {
         float dt = SystemAPI.Time.DeltaTime;
 
-        foreach (var (input, transform) in SystemAPI.Query<RefRO<SquadMoveInput>, RefRW<LocalTransform>>())
+        foreach (var (input, squadTransform) in SystemAPI.Query<RefRO<SquadMoveInput>, RefRW<LocalTransform>>())
         {
-            var moveDir = new float3(input.ValueRO.MoveInput.x, 0, input.ValueRO.MoveInput.y);
-            if (math.lengthsq(moveDir) > 0.01f)
-            {
-                // Поворот к направлению
-                var targetRot = quaternion.LookRotationSafe(math.normalizesafe(moveDir), math.up());
-                transform.ValueRW.Rotation = math.slerp(
-                    transform.ValueRW.Rotation,
-                    targetRot,
-                    rotationSpeed * dt
-                );
+            if (input.ValueRO.Move == 0 && input.ValueRO.Rotation == 0)
+                continue;
 
-                // Движение
-                var forward = transform.ValueRW.Forward();
-                transform.ValueRW.Position += forward * moveSpeed * dt;
+            var moveDir = squadTransform.ValueRO.Forward() * input.ValueRO.Move;
+            squadTransform.ValueRW.Position += moveDir * moveSpeed * dt;
+            
+            float angle = math.radians(rotationSpeed * input.ValueRO.Rotation * dt);
+            quaternion deltaRotation = quaternion.AxisAngle(math.up(), angle);
+
+            var source = squadTransform.ValueRO.Rotation.value;
+            if (source.x == 0 && source.y == 0 && source.z == 0 && source.w == 0)
+            {
+                squadTransform.ValueRW.Rotation = quaternion.identity;
             }
+            
+            squadTransform.ValueRW.Rotation = math.mul(deltaRotation, squadTransform.ValueRO.Rotation);
         }
     }
 }
