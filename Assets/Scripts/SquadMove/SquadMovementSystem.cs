@@ -6,8 +6,8 @@ using UnityEngine;
 [UpdateInGroup(typeof(SimulationSystemGroup))]
 public partial struct SquadMovementSystem : ISystem
 {
-    const float rotationSpeed = 90f;
-    const float moveSpeed = 1.5f;
+    const float rotationSpeed = 30f;
+    const float moveSpeed = 1f;
     
     public void OnUpdate(ref SystemState state)
     {

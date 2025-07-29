@@ -16,19 +16,17 @@ partial struct SpawnerSystem : ISystem, ISystemStartStop
         var ecb = new EntityCommandBuffer(Allocator.Temp);
         var squad = ecb.CreateEntity();
         ecb.AddComponent<SquadData>(squad);
-        ecb.SetComponent(squad, new SquadData(){MoveSpeed = 2, RotationSpeed = 4, RowCount = 4 });
+        ecb.SetComponent(squad, new SquadData() { MoveSpeed = 2, RotationSpeed = 4, RowCount = 4 });
         ecb.AddComponent<SquadMoveInput>(squad);
-        // ecb.SetComponent(squad, LocalTransform.FromPositionRotation(float3.zero, quaternion.identity));
         ecb.AddComponent<LocalTransform>(squad);
-        // ecb.AddComponent<LocalToWorld>(squad);
         ecb.AddComponent<SquadCameraTarget>(squad);
-        
+
         ecb.AddComponent(squad, new DebugSphere()
         {
             Radius = 1,
             Color = Color.red,
         });
-        
+
         foreach (var prefab in SystemAPI.Query<RefRW<SpawnerData>>())
         {
             for (int i = 0; i < prefab.ValueRW.SpawnCount; i++)
@@ -36,12 +34,9 @@ partial struct SpawnerSystem : ISystem, ISystemStartStop
                 var instance = ecb.Instantiate(prefab.ValueRO.Prefab);
                 ecb.AddComponent<LocalTransform>(instance);
                 ecb.SetComponent(instance, LocalTransform.FromPosition(float3.zero));
-                //ecb.SetComponent(instance, LocalTransform.FromPosition(float3.zero));
-                ecb.AddComponent<FormationUnit>(instance, new FormationUnit() { Index = prefab.ValueRW.SpawnCount });
+                ecb.AddComponent(instance, new FormationUnit() { Index = i });
                 ecb.AddComponent<UnitTargetPosition>(instance);
             }
-            
-            prefab.ValueRW.SpawnCount--;
         }
 
         ecb.Playback(state.EntityManager);
@@ -56,6 +51,6 @@ partial struct SpawnerSystem : ISystem, ISystemStartStop
     [BurstCompile]
     public void OnDestroy(ref SystemState state)
     {
-        
+
     }
 }

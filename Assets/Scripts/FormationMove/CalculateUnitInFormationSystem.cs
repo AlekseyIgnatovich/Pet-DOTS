@@ -52,14 +52,12 @@ public partial struct CalculateUnitInFormationSystem : ISystem
     [BurstCompile]
     private partial struct ProcessUnitsJob : IJobChunk
     {
+        const float spacing = 1.2f;
+        
         [ReadOnly] public ComponentTypeHandle<FormationUnit> FormationUnitType;
         public ComponentTypeHandle<UnitTargetPosition> TargetPositionType;
-        public int UnitsCount;
         public LocalTransform SquadTransform;
-
         public int UnitsInRow;
-
-        const float spacing = 2f;
 
         public void Execute(in ArchetypeChunk chunk, int unfilteredChunkIndex, bool useEnabledMask, in v128 chunkEnabledMask)
         {
@@ -67,14 +65,14 @@ public partial struct CalculateUnitInFormationSystem : ISystem
             var targetPositions = chunk.GetNativeArray(ref TargetPositionType);
             for (int i = 0; i < chunk.Count; i++)
             {
-                var unit = formationUnits[i];
+                var index = formationUnits[i].Index;
+                
                 UnitTargetPosition unitTargetPos = targetPositions[i];
 
-                int row = i / UnitsInRow;
-                int col = i % UnitsInRow;
+                int row = index / UnitsInRow;
+                int col = index % UnitsInRow;
 
                 float3 offset = new float3((col - UnitsInRow / 2f) * spacing, 0, -row * spacing);
-                
                 float3 rotatedVector = math.rotate(SquadTransform.Rotation, offset);
 
                 unitTargetPos.Value = SquadTransform.Position + rotatedVector;

@@ -26,8 +26,8 @@ public partial struct SquadInputSystem : ISystem
         
         if (Input.GetKey(KeyCode.W)) move += 1f;
         if (Input.GetKey(KeyCode.S)) move -= 1f;
-        if (Input.GetKey(KeyCode.D)) rotation -= 1f;
-        if (Input.GetKey(KeyCode.A)) rotation += 1f;
+        if (Input.GetKey(KeyCode.D)) rotation += 1f;
+        if (Input.GetKey(KeyCode.A)) rotation -= 1f;
         if (Input.GetKey(KeyCode.Q)) distance -= 1f;
         if (Input.GetKey(KeyCode.Z)) distance += 1f;
 
