@@ -7,45 +7,53 @@ using UnityEngine;
 
 partial struct SpawnerSystem : ISystem, ISystemStartStop
 {
-    [BurstCompile]
-    public void OnStartRunning(ref SystemState state)
+    public void OnCreate(ref SystemState state)
     {
-        Debug.LogError($"Spawn!!");
+        state.RequireForUpdate<SquadSpawnTag>();
         state.RequireForUpdate<SpawnerData>();
-
+    }
+    
+    public void OnUpdate(ref SystemState state)
+    {
         var ecb = new EntityCommandBuffer(Allocator.Temp);
-        var squad = ecb.CreateEntity();
-        ecb.AddComponent<SquadData>(squad);
-        ecb.SetComponent(squad, new SquadData() { MoveSpeed = 2, RotationSpeed = 4, RowCount = 4 });
-        ecb.AddComponent<SquadMoveInput>(squad);
-        ecb.AddComponent<LocalTransform>(squad);
-        ecb.AddComponent<SquadCameraTarget>(squad);
 
-        ecb.AddComponent(squad, new DebugSphere()
+        Entity unitPrefab = default;
+        foreach (var prefab in SystemAPI.Query<RefRO<SpawnerData>>())
         {
-            Radius = 1,
-            Color = Color.red,
-        });
+            unitPrefab = prefab.ValueRO.Prefab;
+        }
 
-        foreach (var prefab in SystemAPI.Query<RefRW<SpawnerData>>())
+        foreach (var squad in SystemAPI.Query<RefRO<SquadSpawnTag>, RefRO<SquadData>>().WithEntityAccess())
         {
-            for (int i = 0; i < prefab.ValueRW.SpawnCount; i++)
+            Debug.LogError($"Start spawn squad");
+
+            for (int i = 0; i < squad.Item2.ValueRO.StartUnitsCount; i++)
             {
-                var instance = ecb.Instantiate(prefab.ValueRO.Prefab);
+                var instance = ecb.Instantiate(unitPrefab);
                 ecb.AddComponent<LocalTransform>(instance);
                 ecb.SetComponent(instance, LocalTransform.FromPosition(float3.zero));
                 ecb.AddComponent(instance, new FormationUnit() { Index = i });
                 ecb.AddComponent<UnitTargetPosition>(instance);
+                Debug.LogError($"Instatiated!!!");
             }
+            
+            ecb.RemoveComponent<SquadSpawnTag>(squad.Item3);
         }
 
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
+        
+    }
+    
+    [BurstCompile]
+    public void OnStartRunning(ref SystemState state)
+    {
+       
     }
 
     public void OnStopRunning(ref SystemState state)
     {
-        Debug.Log($"OnStopRunning");
+        // Debug.LogError($"OnStopRunning");
     }
 
     [BurstCompile]

@@ -18,7 +18,6 @@ public partial struct FollowSquadCameraSystem : ISystem
         {
             targetPosition = transform.ValueRO.Position;
             targetForward = transform.ValueRO.Forward();
-
         }
 
         //ToDo: поправить так чтобы проверка была не нужна

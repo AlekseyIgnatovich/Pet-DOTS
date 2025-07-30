@@ -7,6 +7,10 @@ using UnityEngine.SceneManagement;
 
 public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
+    [SerializeField] private NetworkPrefabRef _playerPrefab;
+    private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
+    private NetworkRunner _runner;
+    
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason) { }
     public void OnConnectedToServer(NetworkRunner runner) { }
@@ -23,7 +27,6 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     public void OnObjectEnterAOI(NetworkRunner runner, NetworkObject obj, PlayerRef player){ }
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ReliableKey key, ArraySegment<byte> data){ }
     public void OnReliableDataProgress(NetworkRunner runner, PlayerRef player, ReliableKey key, float progress){ }
-    
     
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
@@ -44,11 +47,6 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         input.Set(data);
     }
     
-    
-    
-    
-    private NetworkRunner _runner;
-
     async void StartGame(GameMode mode)
     {
         // Create the Fusion runner and let it know that we will be providing user input
@@ -61,7 +59,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (scene.IsValid) {
             sceneInfo.AddSceneRef(scene, LoadSceneMode.Additive);
         }
-
+        
         // Start or join (depends on gamemode) a session with a specific name
         await _runner.StartGame(new StartGameArgs()
         {
@@ -70,6 +68,10 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
             Scene = scene,
             SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
         });
+        
+        if (mode == GameMode.Host) {
+            _runner.LoadScene(SceneRef.FromIndex(1), LoadSceneMode.Additive);
+        }
     }
     
     private void OnGUI()
@@ -88,8 +90,6 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     }
     
     
-    [SerializeField] private NetworkPrefabRef _playerPrefab;
-    private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
 
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {

@@ -1,6 +1,6 @@
 using Fusion;
 
-public class NetworkPlayer: NetworkBehaviour
+public class NetworkPlayer : NetworkBehaviour
 {
     private NetworkCharacterController _cc;
 
@@ -14,7 +14,9 @@ public class NetworkPlayer: NetworkBehaviour
         if (GetInput(out NetworkInputData data))
         {
             data.direction.Normalize();
-            _cc.Move(5*data.direction*Runner.DeltaTime);
+            _cc.Move(5 * data.direction * Runner.DeltaTime);
         }
+        
+        
     }
 }

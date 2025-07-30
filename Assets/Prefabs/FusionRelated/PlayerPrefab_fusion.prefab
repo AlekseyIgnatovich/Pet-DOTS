@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 1761484250087262770}
   - component: {fileID: 7277341301514876167}
   - component: {fileID: -743489034215470266}
+  - component: {fileID: 6281901170456621083}
+  - component: {fileID: 5492912683404187380}
   m_Layer: 0
   m_Name: PlayerPrefab_fusion
   m_TagString: Untagged
@@ -55,6 +57,7 @@ MonoBehaviour:
   NetworkedBehaviours:
   - {fileID: 7277341301514876167}
   - {fileID: -743489034215470266}
+  - {fileID: 5492912683404187380}
   ForceRemoteRenderTimeframe: 0
 --- !u!143 &1761484250087262770
 CharacterController:
@@ -110,6 +113,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ce1709ea2d30945949582843297aabfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6281901170456621083
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1311991005365606309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d5b59516d032463f976fa274c3f981e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5492912683404187380
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1311991005365606309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fd2236ae4c494d8699e670530ab68ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6488593490500368399
