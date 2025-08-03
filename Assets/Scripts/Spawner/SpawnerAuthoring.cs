@@ -13,6 +13,10 @@ class SpawnerAuthoringBaker : Baker<SpawnerAuthoring>
     {
         var entityPrefab = GetEntity(authoring.prefab, TransformUsageFlags.Dynamic);
         var entity = GetEntity(TransformUsageFlags.Dynamic);
-        AddComponent(entity, new SpawnerData() {Prefab = entityPrefab, SpawnCount = authoring.count});
+        
+        AddComponent(entity, new SpawnerData()
+        {
+            Prefab = entityPrefab, 
+        });
     }
 }
