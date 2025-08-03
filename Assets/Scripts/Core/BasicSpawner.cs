@@ -30,19 +30,24 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        var data = new NetworkInputData();
+        var move = 0f;
+        var rotation = 0f;
+        var distance = 0f;
+        
 
-        if (Input.GetKey(KeyCode.W))
-            data.direction += Vector3.forward;
-
-        if (Input.GetKey(KeyCode.S))
-            data.direction += Vector3.back;
-
-        if (Input.GetKey(KeyCode.A))
-            data.direction += Vector3.left;
-
-        if (Input.GetKey(KeyCode.D))
-            data.direction += Vector3.right;
+        if (Input.GetKey(KeyCode.W)) move += 1f;
+        if (Input.GetKey(KeyCode.S)) move -= 1f;
+        if (Input.GetKey(KeyCode.D)) rotation += 1f;
+        if (Input.GetKey(KeyCode.A)) rotation -= 1f;
+        if (Input.GetKey(KeyCode.Q)) distance -= 1f;
+        if (Input.GetKey(KeyCode.Z)) distance += 1f;
+        
+        var data = new NetworkInputData()
+        {
+            Move = move,
+            Rotation = rotation,
+            Distance = distance,
+        };
 
         input.Set(data);
     }
