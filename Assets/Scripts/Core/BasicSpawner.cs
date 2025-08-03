@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] private NetworkPrefabRef _playerPrefab;
+    [SerializeField] private GameObject[] _spawnPoints;
+
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
     private NetworkRunner _runner;
     
@@ -99,8 +101,9 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (runner.IsServer)
         {
             // Create a unique position for the player
-            Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.PlayerCount) * 3, 1, 0);
-            NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
+            var index = player.RawEncoded % _spawnPoints.Length;
+            Vector3 spawnPosition = _spawnPoints[index].transform.position;
+            NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.LookRotation(-spawnPosition), player);
             // Keep track of the player avatars for easy access
             _spawnedCharacters.Add(player, networkPlayerObject);
         }

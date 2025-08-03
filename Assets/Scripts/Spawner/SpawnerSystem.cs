@@ -14,20 +14,22 @@ partial struct SpawnerSystem : ISystem, ISystemStartStop
     
     public void OnUpdate(ref SystemState state)
     {
-        Entity unitPrefab = default;
-        foreach (var prefab in SystemAPI.Query<RefRO<SpawnerData>>())
+        SpawnerData spawnerData = default;
+        foreach (var item in SystemAPI.Query<RefRO<SpawnerData>>())
         {
-            unitPrefab = prefab.ValueRO.Prefab;
+            spawnerData = item.ValueRO;
         }
         
         var ecb = new EntityCommandBuffer(Allocator.Temp);
+        int spawnerIndex = 0;
         foreach (var squad in SystemAPI.Query<RefRO<SquadSpawnTag>, RefRO<SquadData>, RefRO<TeamComp>>().WithEntityAccess())
         {
             for (int i = 0; i < squad.Item2.ValueRO.StartUnitsCount; i++)
             {
-                var instance = ecb.Instantiate(unitPrefab);
+                var instance = ecb.Instantiate(spawnerData.Prefab);
                 ecb.AddComponent<LocalTransform>(instance);
                 ecb.SetComponent(instance, LocalTransform.FromPosition(float3.zero));
+                spawnerIndex++;
                 ecb.AddComponent(instance, new FormationUnit() { Index = i });
                 ecb.AddComponent<UnitTargetPosition>(instance);
                 ecb.AddComponent<TeamComp>(instance);
