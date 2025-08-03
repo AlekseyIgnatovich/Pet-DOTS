@@ -13,8 +13,7 @@ public partial struct FollowSquadCameraSystem : ISystem
         float3 targetPosition = float3.zero;
         float3 targetForward = math.forward();
 
-        foreach (var (transform, squadData) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SquadData>>()
-                     .WithAll<SquadCameraTarget>())
+        foreach (var (transform, squadData) in SystemAPI.Query<RefRO<LocalTransform>, RefRO<SquadData>>().WithAll<SquadCameraTarget>())
         {
             targetPosition = transform.ValueRO.Position;
             targetForward = transform.ValueRO.Forward();

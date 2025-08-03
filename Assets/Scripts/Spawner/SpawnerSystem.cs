@@ -3,7 +3,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 partial struct SpawnerSystem : ISystem, ISystemStartStop
 {
@@ -15,18 +14,15 @@ partial struct SpawnerSystem : ISystem, ISystemStartStop
     
     public void OnUpdate(ref SystemState state)
     {
-        var ecb = new EntityCommandBuffer(Allocator.Temp);
-
         Entity unitPrefab = default;
         foreach (var prefab in SystemAPI.Query<RefRO<SpawnerData>>())
         {
             unitPrefab = prefab.ValueRO.Prefab;
         }
-
-        foreach (var squad in SystemAPI.Query<RefRO<SquadSpawnTag>, RefRO<SquadData>>().WithEntityAccess())
+        
+        var ecb = new EntityCommandBuffer(Allocator.Temp);
+        foreach (var squad in SystemAPI.Query<RefRO<SquadSpawnTag>, RefRO<SquadData>, RefRO<TeamComp>>().WithEntityAccess())
         {
-            Debug.LogError($"Start spawn squad");
-
             for (int i = 0; i < squad.Item2.ValueRO.StartUnitsCount; i++)
             {
                 var instance = ecb.Instantiate(unitPrefab);
@@ -34,10 +30,11 @@ partial struct SpawnerSystem : ISystem, ISystemStartStop
                 ecb.SetComponent(instance, LocalTransform.FromPosition(float3.zero));
                 ecb.AddComponent(instance, new FormationUnit() { Index = i });
                 ecb.AddComponent<UnitTargetPosition>(instance);
-                Debug.LogError($"Instatiated!!!");
+                ecb.AddComponent<TeamComp>(instance);
+                ecb.SetComponent(instance, new TeamComp() { PlayerId = squad.Item3.ValueRO.PlayerId });
             }
             
-            ecb.RemoveComponent<SquadSpawnTag>(squad.Item3);
+            ecb.RemoveComponent<SquadSpawnTag>(squad.Item4);
         }
 
         ecb.Playback(state.EntityManager);

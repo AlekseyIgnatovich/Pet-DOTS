@@ -11,13 +11,21 @@ public class PlayerInputBridge : NetworkBehaviour
     {
         _entityManager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
-        var playerArchetype = _entityManager.CreateArchetype(typeof(SquadData), typeof(SquadMoveInput), typeof(SquadCameraTarget), typeof(LocalTransform), typeof(DebugSphere));
+        var playerArchetype = _entityManager.CreateArchetype(typeof(SquadData), typeof(SquadMoveInput), typeof(LocalTransform), typeof(DebugSphere));
         _entity = _entityManager.CreateEntity(playerArchetype);
         _entityManager.AddComponentData(_entity, new SquadData() { MoveSpeed = 2, RotationSpeed = 4, RowCount = 4, StartUnitsCount = 100 });
         _entityManager.AddComponent<SquadSpawnTag>(_entity);
+        _entityManager.AddComponent<TeamComp>(_entity);
+
+        if (HasInputAuthority)
+        {
+            _entityManager.AddComponent<SquadCameraTarget>(_entity);
+        }
+
+        _entityManager.AddComponentData(_entity, new TeamComp() { PlayerId = Object.InputAuthority.PlayerId });
     }
 
-    public override void FixedUpdateNetwork()
+    private void Update()
     {
         if (_entityManager.Exists(_entity))
         {

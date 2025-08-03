@@ -89,8 +89,6 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         }
     }
     
-    
-
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         if (runner.IsServer)
