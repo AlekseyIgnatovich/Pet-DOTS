@@ -166,10 +166,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   count: 100
-  prefab: {fileID: 3786602778616340142, guid: 001e234d62c4c4e1e802403885e0811f, type: 3}
-  spawnPoints:
-  - {fileID: 0}
-  - {fileID: 0}
+  unitPrefab: {fileID: 3786602778616340142, guid: 001e234d62c4c4e1e802403885e0811f,
+    type: 3}
+  projectilePrefab: {fileID: 716672401306999026, guid: bbc7451776d1f45368c56872386f30e5,
+    type: 3}
 --- !u!1 &1306548571
 GameObject:
   m_ObjectHideFlags: 0

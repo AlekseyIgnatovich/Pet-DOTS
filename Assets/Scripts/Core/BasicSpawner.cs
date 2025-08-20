@@ -2,6 +2,8 @@ using Fusion;
 using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
+using ExitGames.Client.Photon;
+using Fusion.Photon.Realtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -35,7 +37,7 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         var move = 0f;
         var rotation = 0f;
         var distance = 0f;
-        
+        var shoot = false;
 
         if (Input.GetKey(KeyCode.W)) move += 1f;
         if (Input.GetKey(KeyCode.S)) move -= 1f;
@@ -43,12 +45,14 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         if (Input.GetKey(KeyCode.A)) rotation -= 1f;
         if (Input.GetKey(KeyCode.Q)) distance -= 1f;
         if (Input.GetKey(KeyCode.Z)) distance += 1f;
+        if (Input.GetKey(KeyCode.Space)) shoot = true;
         
         var data = new NetworkInputData()
         {
             Move = move,
             Rotation = rotation,
             Distance = distance,
+            Shoot = shoot,
         };
 
         input.Set(data);
@@ -56,6 +60,9 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     
     async void StartGame(GameMode mode)
     {
+        Unity.Entities.EntitiesJournaling.Enabled = false;
+        PhotonAppSettings.Global.AppSettings.Protocol = ConnectionProtocol.Tcp; // Принудительно TCP
+        
         // Create the Fusion runner and let it know that we will be providing user input
         _runner = gameObject.AddComponent<NetworkRunner>();
         _runner.ProvideInput = true;

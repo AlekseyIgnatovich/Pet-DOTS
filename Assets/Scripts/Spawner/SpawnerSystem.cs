@@ -26,7 +26,7 @@ partial struct SpawnerSystem : ISystem, ISystemStartStop
         {
             for (int i = 0; i < squad.Item2.ValueRO.StartUnitsCount; i++)
             {
-                var instance = ecb.Instantiate(spawnerData.Prefab);
+                var instance = ecb.Instantiate(spawnerData.UnitPrefab);
                 ecb.AddComponent<LocalTransform>(instance);
                 ecb.SetComponent(instance, LocalTransform.FromPosition(float3.zero));
                 spawnerIndex++;
