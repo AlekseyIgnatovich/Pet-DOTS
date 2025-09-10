@@ -38,12 +38,13 @@ public partial struct ProjectileSpawnSystem : ISystem
                     Rotation = unit.Item2.ValueRO.Rotation,
                     Scale = 1
                 });
-                
+
                 ecb.AddComponent<Projectile>(projectile);
+                ecb.AddComponent<ProjectileTag>(projectile);
                 ecb.SetComponent(projectile, new Projectile
                 {
                     Speed = 20f,
-                    Direction = new float3(0, 0, 1)
+                    Direction = math.mul(unit.Item2.ValueRO.Rotation, math.forward())
                 });
                 
                 ecb.AddComponent<Lifetime>(projectile);

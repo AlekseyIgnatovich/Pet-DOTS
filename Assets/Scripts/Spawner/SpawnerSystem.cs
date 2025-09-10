@@ -39,6 +39,24 @@ partial struct SpawnerSystem : ISystem, ISystemStartStop
             ecb.RemoveComponent<SquadSpawnTag>(squad.Item4);
         }
 
+        for (int i = 0; i < 10; i++)
+        {
+            var instance = ecb.Instantiate(spawnerData.ShootTargetPrefab);
+
+            ecb.AddComponent<LocalTransform>(instance);
+            ecb.AddComponent<TargetTag>(instance);
+
+            float3 pos = new float3(
+                UnityEngine.Random.Range(-5f, 5f),
+                0f,
+                UnityEngine.Random.Range(-5f, 5f)
+            );
+            ecb.SetComponent(instance, LocalTransform.FromPosition(pos));
+            
+            ecb.AddComponent<Health>(instance);
+            ecb.SetComponent<Health>(instance, new Health(){Value = 30});
+        }
+        
         ecb.Playback(state.EntityManager);
         ecb.Dispose();
         

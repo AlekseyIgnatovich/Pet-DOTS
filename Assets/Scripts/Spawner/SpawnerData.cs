@@ -4,4 +4,5 @@ public struct SpawnerData : IComponentData
 {
     public Entity UnitPrefab;
     public Entity ProjectilePrefab;
+    public Entity ShootTargetPrefab;
 }
